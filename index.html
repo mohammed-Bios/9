@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة قواعد البيانات Microsoft Access | مدرسة أبو الدرداء - الصف التاسع</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Cairo & Tajawal & Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        access: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#881337',
+                            900: '#4c0519',
+                            950: '#2c020e',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif'],
+                        code: ['Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #881337;
+            border-radius: 4px;
+        }
+
+        /* Certificate Print CSS Optimization */
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #section-certificate, #printable-certificate, #printable-certificate * {
+                visibility: visible !important;
+            }
+            #section-certificate {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            #printable-certificate {
+                box-shadow: none !important;
+                border-width: 4px !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #881337 0%, #4c0519 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 20px rgba(136, 19, 55, 0.5);
+            border-bottom: 3px solid #f59e0b;
+        }
+
+        .access-subtab.active {
+            background-color: #881337;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .avatar-option.selected {
+            border-color: #f59e0b;
+            background-color: rgba(245, 158, 11, 0.2);
+            transform: scale(1.08);
+        }
+
+        @keyframes pulse-highlight {
+            0%, 100% { background-color: rgba(245, 158, 11, 0.2); }
+            50% { background-color: rgba(245, 158, 11, 0.5); }
+        }
+        .macro-active-step {
+            animation: pulse-highlight 0.8s infinite ease-in-out;
+            border-color: #f59e0b !important;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-100 selection:bg-access-600 selection:text-white">
+
+    <!-- Celebration Confetti Canvas -->
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+    <!-- Custom Notification Toast -->
+    <div id="toast" class="fixed bottom-5 left-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 border border-access-600/60 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
+        <div>
+            <h5 id="toast-title" class="font-bold text-xs text-white">إشعار</h5>
+            <p id="toast-msg" class="text-xs text-slate-300">تمت العملية بنجاح</p>
+        </div>
+    </div>
+
+    <!-- Student Onboarding Modal -->
+    <div id="onboarding-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+        <div class="glass-panel rounded-3xl p-6 sm:p-10 max-w-lg w-full text-center border-2 border-access-700/50 shadow-2xl relative overflow-hidden">
+            
+            <div class="absolute -top-16 -right-16 w-48 h-48 bg-access-700/30 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-16 -left-16 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="w-16 h-16 bg-gradient-to-tr from-access-800 to-access-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white text-3xl shadow-xl border border-access-500/40">
+                <i class="fa-solid fa-database"></i>
+            </div>
+
+            <h1 class="text-2xl sm:text-3xl font-black mb-1 text-white font-tajawal">مرحباً بمهندس قواعد البيانات!</h1>
+            <p class="text-slate-300 text-xs sm:text-sm mb-5">رحلة تفاعلية لشرح برنامج Microsoft Access - الصف التاسع</p>
+
+            <!-- School Header Card -->
+            <div class="bg-slate-900/90 rounded-2xl p-3 border border-slate-700/60 mb-5 text-xs text-slate-300 space-y-1">
+                <div class="font-bold text-amber-400 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-school"></i> <span>مدرسة أبو الدرداء للتعليم الأساسي</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-right pt-2 border-t border-slate-800 text-[11px]">
+                    <div><span class="text-slate-400">معلم المادة:</span> <strong class="text-slate-200">أ. محمد الهنائي</strong></div>
+                    <div><span class="text-slate-400">مدير المدرسة:</span> <strong class="text-slate-200">أ. سلطان الوائلي</strong></div>
+                    <div class="col-span-2 text-center border-t border-slate-800/60 pt-1"><span class="text-slate-400">مشرف المادة:</span> <strong class="text-slate-200">أ. محمد العزري</strong></div>
+                </div>
+            </div>
+
+            <form id="onboarding-form" onsubmit="handleStudentOnboarding(event)" class="space-y-4 text-right">
+                
+                <div>
+                    <label class="block text-xs font-bold mb-2 text-slate-300">اختر الرمز التعبيري الخاص بك:</label>
+                    <div class="grid grid-cols-6 gap-2" id="avatar-grid">
+                        <button type="button" onclick="selectAvatar('💾', this)" class="avatar-option selected p-2 bg-slate-800 border border-slate-700 rounded-xl text-2xl hover:bg-slate-700 transition">💾</button>
+                        <button type="button" onclick="selectAvatar('👨‍💻', this)" class="avatar-option p-2 bg-slate-800 border border-slate-700 rounded-xl text-2xl hover:bg-slate-700 transition">👨‍💻</button>
+                        <button type="button" onclick="selectAvatar('👩‍💻', this)" class="avatar-option p-2 bg-slate-800 border border-slate-700 rounded-xl text-2xl hover:bg-slate-700 transition">👩‍💻</button>
+                        <button type="button" onclick="selectAvatar('📊', this)" class="avatar-option p-2 bg-slate-800 border border-slate-700 rounded-xl text-2xl hover:bg-slate-700 transition">📊</button>
+                        <button type="button" onclick="selectAvatar('⚡', this)" class="avatar-option p-2 bg-slate-800 border border-slate-700 rounded-xl text-2xl hover:bg-slate-700 transition">⚡</button>
+                        <button type="button" onclick="selectAvatar('🏆', this)" class="avatar-option p-2 bg-slate-800 border border-slate-700 rounded-xl text-2xl hover:bg-slate-700 transition">🏆</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold mb-1 text-slate-300">اسم الطالب الكامل <span class="text-red-400">*</span></label>
+                    <input type="text" id="input-student-name" required placeholder="أدخل اسمك الثلاثي أو الرباعي" 
+                        class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-access-600 focus:border-transparent outline-none text-white text-xs transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold mb-1 text-slate-300">الصف / الشعبة <span class="text-red-400">*</span></label>
+                    <select id="input-student-class" required class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-access-600 focus:border-transparent outline-none text-white text-xs transition">
+                        <option value="">اختر شعبتك...</option>
+                        <option value="9 / 1">الصف التاسع - شعبة 1</option>
+                        <option value="9 / 2">الصف التاسع - شعبة 2</option>
+                        <option value="9 / 3">الصف التاسع - شعبة 3</option>
+                        <option value="9 / 4">الصف التاسع - شعبة 4</option>
+                        <option value="9 / 5">الصف التاسع - شعبة 5</option>
+                        <option value="9 / 6">الصف التاسع - شعبة 6</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 px-6 bg-gradient-to-r from-access-800 via-access-700 to-access-600 hover:from-access-700 hover:to-access-500 text-white font-bold rounded-xl shadow-lg shadow-access-800/30 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm">
+                    <span>دخول المنصة وبدء التحديات</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-access-800 rounded-xl flex items-center justify-center text-white shadow-lg text-lg font-black border border-access-600/50">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-base sm:text-lg font-black text-white font-tajawal leading-tight">قواعد البيانات (Microsoft Access)</h1>
+                        <p class="text-[11px] text-access-500 font-semibold">مدرسة أبو الدرداء | الصف التاسع</p>
+                    </div>
+                </div>
+
+                <!-- Teacher Cadre Quick Bar -->
+                <div class="hidden xl:flex items-center gap-3 text-xs bg-slate-800/80 px-3.5 py-1.5 rounded-xl border border-slate-700/60 text-slate-300">
+                    <div><i class="fa-solid fa-chalkboard-user text-access-500 ml-1"></i> معلم المادة: <strong class="text-white">أ. محمد الهنائي</strong></div>
+                    <span class="text-slate-600">|</span>
+                    <div><i class="fa-solid fa-user-check text-emerald-400 ml-1"></i> المشرف: <strong class="text-white">أ. محمد العزري</strong></div>
+                    <span class="text-slate-600">|</span>
+                    <div><i class="fa-solid fa-user-tie text-amber-400 ml-1"></i> المدير: <strong class="text-white">أ. سلطان الوائلي</strong></div>
+                </div>
+
+                <!-- Student Profile Badge & Sound Toggle -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-slate-800/90 border border-slate-700/80 rounded-xl px-3 py-1.5 flex items-center gap-3">
+                        <span id="nav-student-avatar" class="text-2xl">💾</span>
+                        <div class="text-right">
+                            <div id="nav-student-name" class="text-xs font-bold text-white">طالب زائر</div>
+                            <div class="flex items-center gap-2 text-[10px] text-slate-400">
+                                <span id="nav-student-class">الصف 9</span>
+                                <span class="text-slate-600">•</span>
+                                <span class="text-amber-400 font-bold"><i class="fa-solid fa-star ml-0.5"></i> <span id="nav-xp-score">0</span> XP</span>
+                                <span class="text-slate-600">•</span>
+                                <span id="nav-user-rank" class="text-access-500 font-bold">مبتدئ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="toggleAudioMute()" id="sound-btn" class="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-300 transition text-xs" title="كتم / تشغيل الصوت">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full bg-slate-800 h-1">
+            <div id="global-progress" class="bg-gradient-to-r from-access-700 via-amber-500 to-emerald-400 h-full w-0 transition-all duration-500"></div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-slate-900/95 border-b border-slate-800 sticky top-[61px] z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-1 space-x-reverse overflow-x-auto py-2 no-scrollbar text-xs sm:text-sm font-bold">
+                <button onclick="switchTab('lesson')" id="tab-lesson" class="tab-btn active px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap transition">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>الشرح التفاعلي</span>
+                </button>
+                <button onclick="switchTab('workbench')" id="tab-workbench" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-laptop-code text-access-500"></i>
+                    <span>محاكي أكسس الشامل (Access Workbench)</span>
+                </button>
+                <button onclick="switchTab('matching')" id="tab-matching" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-puzzle-piece"></i>
+                    <span>تحدي المطابقة</span>
+                </button>
+                <button onclick="switchTab('architect')" id="tab-architect" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-sitemap"></i>
+                    <span>مهندس قواعد البيانات</span>
+                </button>
+                <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>معركة الأبطال</span>
+                </button>
+                <button onclick="switchTab('certificate')" id="tab-certificate" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-award text-amber-400"></i>
+                    <span>تقرير الإنجاز والشهادة</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- TAB 1: INTERACTIVE LESSON CURRICULUM -->
+        <section id="section-lesson" class="space-y-6">
+            
+            <!-- Hero Banner -->
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 border-r-4 border-r-access-600 relative overflow-hidden">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-access-800/40 text-access-400 text-xs rounded-full font-bold mb-2">وحدة قواعد البيانات - الصف التاسع</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-white font-tajawal">كائنات برنامج مايكروسوفت أكسس (Microsoft Access Objects)</h2>
+                        <p class="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl">تتعلم في هذه الوحدة الكائنات الخمسة الأساسية لبناء نظام حفظ واسترجاع البيانات: الجداول، الاستعلامات، النماذج، التقارير، والماكرو.</p>
+                    </div>
+                    <div>
+                        <button onclick="switchTab('workbench')" class="px-5 py-3 bg-access-800 hover:bg-access-700 text-white rounded-xl text-xs font-bold transition shadow-lg flex items-center gap-2 border border-access-600/40">
+                            <i class="fa-solid fa-play"></i>
+                            <span>فتح المحاكي التفاعلي المباشر</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Curriculum Modules Grid (5 Access Objects) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- 1. Tables -->
+                <div class="glass-panel rounded-2xl p-5 border border-slate-700/80 hover:border-access-600/50 transition flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-access-800/40 text-access-400 flex items-center justify-center font-bold text-base border border-access-700/40">
+                                1
+                            </div>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg font-mono">Tables</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white font-tajawal flex items-center gap-2">
+                            <i class="fa-solid fa-table text-access-500"></i> الجداول (Tables)
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            هي العمود الفقري لقاعدة البيانات. تتكون من <strong class="text-amber-400">حقول (Fields)</strong> تمثل أعمدة البيانات، و<strong class="text-emerald-400">سجلات (Records)</strong> تمثل الأسطر الأفية.
+                        </p>
+                        
+                        <div class="space-y-1.5 text-xs text-slate-300 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <div class="font-bold text-amber-300 mb-1"><i class="fa-solid fa-key ml-1"></i> المفتاح الأساسي (Primary Key):</div>
+                            <p class="text-[11px] text-slate-400">حقل فريد لا يتكرر ولا يترك فارغاً، مثل (رقم الطالب) لتميز كل سجل بدقة.</p>
+                            <div class="pt-2 border-t border-slate-800 text-[11px]">
+                                <strong class="text-access-400">أنواع البيانات:</strong> نص قصير، رقم، تاريخ/وقت، عملة، نعم/لا.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="openWorkbenchTab('tables')" class="mt-4 w-full py-2 bg-access-800/30 hover:bg-access-700/50 text-access-300 rounded-xl text-xs font-bold transition border border-access-700/40">
+                        <i class="fa-solid fa-table ml-1"></i> تجربة الجداول والحقول
+                    </button>
+                </div>
+
+                <!-- 2. Queries -->
+                <div class="glass-panel rounded-2xl p-5 border border-slate-700/80 hover:border-access-600/50 transition flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-base border border-amber-500/30">
+                                2
+                            </div>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg font-mono">Queries</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white font-tajawal flex items-center gap-2">
+                            <i class="fa-solid fa-filter text-amber-400"></i> الاستعلامات (Queries)
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            تُستخدم لاستخراج معلومات محددة من الجداول بناءً على <strong class="text-amber-300">معايير وتصفية (Criteria)</strong> مخصصة مثل تصفية الطلبة الناجحين فقط.
+                        </p>
+                        
+                        <div class="space-y-1.5 text-xs text-slate-300 bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono">
+                            <div class="text-emerald-400">// مثال معيار البحث:</div>
+                            <div>المعدل &gt;= 90 (الطلبة المتفوقين)</div>
+                            <div>المحافظة = "مسقط"</div>
+                        </div>
+                    </div>
+
+                    <button onclick="openWorkbenchTab('queries')" class="mt-4 w-full py-2 bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 rounded-xl text-xs font-bold transition border border-amber-500/30">
+                        <i class="fa-solid fa-filter ml-1"></i> تشغيل استعلام حي
+                    </button>
+                </div>
+
+                <!-- 3. Forms -->
+                <div class="glass-panel rounded-2xl p-5 border border-slate-700/80 hover:border-access-600/50 transition flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-base border border-emerald-500/30">
+                                3
+                            </div>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg font-mono">Forms</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white font-tajawal flex items-center gap-2">
+                            <i class="fa-solid fa-window-maximize text-emerald-400"></i> النماذج (Forms)
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            واجهات تفاعلية مريحة للمستخدم تسمح بإدخال، تعديل، وعرض السجلات بسهولة بدلاً من التعامل المباشر مع جدول البيانات المعقد.
+                        </p>
+                        
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-300 space-y-1">
+                            <div class="text-emerald-300 font-bold"><i class="fa-solid fa-circle-check ml-1"></i> فائـدة النموذج:</div>
+                            <p>حماية قاعدة البيانات وتسهيل عمل مدخل البيانات بتقديم شاشة منظمة بأزرار واضحة.</p>
+                        </div>
+                    </div>
+
+                    <button onclick="openWorkbenchTab('forms')" class="mt-4 w-full py-2 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold transition border border-emerald-500/30">
+                        <i class="fa-solid fa-pen-to-square ml-1"></i> إدخال سجل عبر نموذج
+                    </button>
+                </div>
+
+                <!-- 4. Reports -->
+                <div class="glass-panel rounded-2xl p-5 border border-slate-700/80 hover:border-access-600/50 transition flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-base border border-blue-500/30">
+                                4
+                            </div>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg font-mono">Reports</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white font-tajawal flex items-center gap-2">
+                            <i class="fa-solid fa-file-contract text-blue-400"></i> التقارير (Reports)
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            تُستخدم لتلخيص وطباعة البيانات وتنسيقها بشكل رسمي لمعاينتها على الورق أو عرضها للمدير والمسؤولين.
+                        </p>
+                        
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-300">
+                            <p>مثال: تقرير كشف درجات الطلاب الشهري منسق بشعار وزارة التربية والتعليم جاهز للطباعة.</p>
+                        </div>
+                    </div>
+
+                    <button onclick="openWorkbenchTab('reports')" class="mt-4 w-full py-2 bg-blue-500/20 hover:bg-blue-500/40 text-blue-300 rounded-xl text-xs font-bold transition border border-blue-500/30">
+                        <i class="fa-solid fa-print ml-1"></i> معاينة التقرير الجاهز
+                    </button>
+                </div>
+
+                <!-- 5. Macros -->
+                <div class="glass-panel rounded-2xl p-5 border border-slate-700/80 hover:border-access-600/50 transition flex flex-col justify-between md:col-span-2 lg:col-span-2">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-base border border-purple-500/30">
+                                5
+                            </div>
+                            <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg font-mono">Macros</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white font-tajawal flex items-center gap-2">
+                            <i class="fa-solid fa-bolt text-purple-400"></i> الماكرو والأتمتة (Macros)
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            أداة تتيح أتمتة الإجراءات وتسلسل الأوامر المبرمجة لربط الكائنات معاً وتنفيذ المهام بضغطة زر واحدة بدون كتابة شفرات معقدة.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
+                            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-purple-300">
+                                1. OpenForm (فتح نموذج)
+                            </div>
+                            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-amber-300">
+                                2. RunQuery (تطبيق الاستعلام)
+                            </div>
+                            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-emerald-300">
+                                3. OpenReport (طباعة التقرير)
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="openWorkbenchTab('macros')" class="mt-4 w-full py-2 bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 rounded-xl text-xs font-bold transition border border-purple-500/30">
+                        <i class="fa-solid fa-gears ml-1"></i> بناء وتسجيل ماكرو تفاعلي
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 2: ACCESS INTERACTIVE WORKBENCH -->
+        <section id="section-workbench" class="hidden space-y-4">
+            
+            <!-- Access Ribbon Header -->
+            <div class="glass-panel rounded-2xl p-4 border border-access-700/60 bg-slate-950/90 shadow-2xl">
+                
+                <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-access-800 flex items-center justify-center text-white text-sm font-black">
+                            A
+                        </div>
+                        <div>
+                            <h3 class="text-xs font-bold text-white font-mono">قاعدة بيانات: School_Students_DB.accdb</h3>
+                            <p class="text-[10px] text-slate-400">نظام إدارة سجلات طلبة الصف التاسع - مدرسة أبو الدرداء</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] bg-slate-800 px-3 py-1 rounded-lg text-slate-300">إجمالي السجلات: <strong id="wb-total-records-count" class="text-amber-400">5</strong></span>
+                    </div>
+                </div>
+
+                <!-- Access Ribbon Tabs -->
+                <div class="flex space-x-1 space-x-reverse pt-3 overflow-x-auto text-xs font-bold">
+                    <button onclick="switchAccessSubTab('tables')" id="asubtab-tables" class="access-subtab active px-4 py-2 rounded-xl transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                        <i class="fa-solid fa-table text-access-500"></i> الجداول (Tables)
+                    </button>
+                    <button onclick="switchAccessSubTab('queries')" id="asubtab-queries" class="access-subtab px-4 py-2 rounded-xl transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                        <i class="fa-solid fa-filter text-amber-400"></i> الاستعلامات (Queries)
+                    </button>
+                    <button onclick="switchAccessSubTab('forms')" id="asubtab-forms" class="access-subtab px-4 py-2 rounded-xl transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                        <i class="fa-solid fa-window-maximize text-emerald-400"></i> النماذج (Forms)
+                    </button>
+                    <button onclick="switchAccessSubTab('reports')" id="asubtab-reports" class="access-subtab px-4 py-2 rounded-xl transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                        <i class="fa-solid fa-file-contract text-blue-400"></i> التقارير (Reports)
+                    </button>
+                    <button onclick="switchAccessSubTab('macros')" id="asubtab-macros" class="access-subtab px-4 py-2 rounded-xl transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+                        <i class="fa-solid fa-bolt text-purple-400"></i> الماكرو (Macros)
+                    </button>
+                </div>
+            </div>
+
+            <!-- WORKBENCH SUB-TABS CONTENT -->
+            <div class="glass-panel rounded-2xl p-4 sm:p-6 border border-slate-800 min-h-[500px]">
+                
+                <!-- SUB-TAB 1: TABLES VIEW -->
+                <div id="wbox-tables" class="space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-amber-400"><i class="fa-solid fa-key ml-1"></i> المفتاح الأساسي:</span>
+                            <span class="bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-md font-mono">رقم_الطالب (ID)</span>
+                        </div>
+                        <div class="text-slate-400 text-[11px]">
+                            تُعرض البيانات في وضع ورقة البيانات (Datasheet View)
+                        </div>
+                    </div>
+
+                    <!-- Interactive Data Grid -->
+                    <div class="overflow-x-auto rounded-xl border border-slate-700">
+                        <table class="w-full text-right text-xs">
+                            <thead class="bg-slate-900 text-slate-300 font-bold border-b border-slate-700">
+                                <tr>
+                                    <th class="p-3 text-amber-400 font-mono"><i class="fa-solid fa-key text-[10px] ml-1"></i> رقم_الطالب [رقم]</th>
+                                    <th class="p-3 text-slate-200">اسم_الطالب [نص]</th>
+                                    <th class="p-3 text-slate-200">الصف [نص]</th>
+                                    <th class="p-3 text-slate-200">المعدل [رقم]</th>
+                                    <th class="p-3 text-slate-200">المحافظة [نص]</th>
+                                    <th class="p-3 text-slate-200">رسوم_مستوفاة [نعم/لا]</th>
+                                    <th class="p-3 text-center">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="db-table-body" class="divide-y divide-slate-800 font-mono text-slate-200 bg-slate-950/60">
+                                <!-- Dynamic Rows Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 2: QUERIES VIEW -->
+                <div id="wbox-queries" class="hidden space-y-4">
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
+                        <h4 class="text-xs font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-sliders"></i> مصمم الاستعلامات (Query Criteria Builder)
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <div>
+                                <label class="block text-slate-400 mb-1">اختر الحقل المراد تصفية بياناته:</label>
+                                <select id="query-field-select" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white outline-none">
+                                    <option value="المعدل">المعدل (Grade)</option>
+                                    <option value="المحافظة">المحافظة (Governorate)</option>
+                                    <option value="رسوم_مستوفاة">الرسوم المستوفاة (Paid Fee)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-slate-400 mb-1">المعيار / الشرط (Condition):</label>
+                                <select id="query-op-select" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white outline-none">
+                                    <option value=">=">أكبر من أو يساوي (&gt;=)</option>
+                                    <option value="<=">أقل من أو يساوي (&lt;=)</option>
+                                    <option value="=">يساوي تماماً (=)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-slate-400 mb-1">قيمة المقارنة (Value):</label>
+                                <input type="text" id="query-val-input" value="85" placeholder="أدخل القيمة مثلاً 85 أو مسقط" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white outline-none font-mono">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end pt-2">
+                            <button onclick="runLiveQuery()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition shadow flex items-center gap-1.5">
+                                <i class="fa-solid fa-bolt"></i>
+                                <span>تشغيل الاستعلام وتصفية السجلات</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Query Result Output -->
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs text-slate-400">
+                            <span>نتائج الاستعلام الجاري (Query Results):</span>
+                            <span id="query-results-count" class="text-emerald-400 font-bold">5 سجلات متطابقة</span>
+                        </div>
+                        <div class="overflow-x-auto rounded-xl border border-amber-500/40">
+                            <table class="w-full text-right text-xs">
+                                <thead class="bg-amber-950/40 text-amber-300 font-bold border-b border-amber-500/30">
+                                    <tr>
+                                        <th class="p-3">رقم الطالب</th>
+                                        <th class="p-3">اسم الطالب</th>
+                                        <th class="p-3">الصف</th>
+                                        <th class="p-3">المعدل</th>
+                                        <th class="p-3">المحافظة</th>
+                                        <th class="p-3">الرسوم</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="query-results-body" class="divide-y divide-slate-800 font-mono text-slate-200 bg-slate-950">
+                                    <!-- Results injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 3: FORMS VIEW -->
+                <div id="wbox-forms" class="hidden space-y-4">
+                    <div class="max-w-xl mx-auto bg-slate-900 border-2 border-emerald-500/40 rounded-2xl p-6 shadow-2xl space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                                <i class="fa-solid fa-window-maximize"></i>
+                                <span>نموذج إدخال طالب جديد (Student Entry Form)</span>
+                            </div>
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">متصل بالجدول</span>
+                        </div>
+
+                        <form id="access-form-entry" onsubmit="handleAccessFormSubmit(event)" class="space-y-3 text-xs">
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">اسم الطالب الكامل [نص]:</label>
+                                <input type="text" id="form-inp-name" required placeholder="مثال: سالم بن سعيد الهنائي" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white outline-none focus:border-emerald-500">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-slate-300 font-bold mb-1">الصف/الشعبة [نص]:</label>
+                                    <input type="text" id="form-inp-class" required value="9 / 1" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white outline-none focus:border-emerald-500">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-300 font-bold mb-1">المعدل الأكاديمي [رقم]:</label>
+                                    <input type="number" id="form-inp-grade" min="0" max="100" required value="92" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white outline-none focus:border-emerald-500 font-mono">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-slate-300 font-bold mb-1">المحافظة [نص]:</label>
+                                    <select id="form-inp-gov" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white outline-none focus:border-emerald-500">
+                                        <option value="مسقط">مسقط</option>
+                                        <option value="الداخلية">الداخلية</option>
+                                        <option value="شمال الباطنة">شمال الباطنة</option>
+                                        <option value="ظفار">ظفار</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center pt-5">
+                                    <label class="flex items-center gap-2 cursor-pointer text-slate-300 font-bold">
+                                        <input type="checkbox" id="form-inp-paid" checked class="w-4 h-4 accent-emerald-500">
+                                        <span>استيفاء الرسوم [نعم/لا]</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="pt-3 flex justify-end">
+                                <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                    <span>حفظ السجل وتحديث الجدول فوراً</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 4: REPORTS VIEW -->
+                <div id="wbox-reports" class="hidden space-y-4">
+                    <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs">
+                        <span class="text-blue-400 font-bold"><i class="fa-solid fa-file-invoice ml-1"></i> معاينة التقرير الرسمي المنسق</span>
+                        <button onclick="window.print()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-print"></i> طباعة التقرير
+                        </button>
+                    </div>
+
+                    <!-- Report Document Card -->
+                    <div class="bg-white text-slate-900 p-6 rounded-2xl shadow-2xl max-w-3xl mx-auto font-sans border-4 border-blue-900/30 space-y-4">
+                        <div class="flex justify-between items-center border-b-2 border-blue-900 pb-3 text-xs">
+                            <div>
+                                <h3 class="font-bold text-blue-900 text-sm">وزارة التربية والتعليم</h3>
+                                <p>مدرسة أبو الدرداء للتعليم الأساسي</p>
+                            </div>
+                            <div class="text-center font-bold text-lg text-blue-900">
+                                تقرير كشف أسماء الطلبة
+                            </div>
+                            <div class="text-left text-[11px] text-slate-600">
+                                <p>التاريخ: 2026/10/28</p>
+                                <p>إعداد: أ. محمد الهنائي</p>
+                            </div>
+                        </div>
+
+                        <!-- Summary Cards -->
+                        <div class="grid grid-cols-3 gap-3 text-center text-xs">
+                            <div class="bg-slate-100 p-2 rounded-lg border">
+                                <span class="block text-slate-500 text-[10px]">عدد الطلبة في التقرير</span>
+                                <strong id="rep-stat-count" class="text-blue-900 text-base">5</strong>
+                            </div>
+                            <div class="bg-slate-100 p-2 rounded-lg border">
+                                <span class="block text-slate-500 text-[10px]">متوسط المعدل العام</span>
+                                <strong id="rep-stat-avg" class="text-blue-900 text-base">89%</strong>
+                            </div>
+                            <div class="bg-slate-100 p-2 rounded-lg border">
+                                <span class="block text-slate-500 text-[10px]">الحالة الإدارية</span>
+                                <strong class="text-emerald-700 text-base">معتمد رسمياً</strong>
+                            </div>
+                        </div>
+
+                        <!-- Table Data in Report -->
+                        <table class="w-full text-right text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-blue-900 text-white border border-blue-900">
+                                    <th class="p-2 border">رقم الطالب</th>
+                                    <th class="p-2 border">اسم الطالب</th>
+                                    <th class="p-2 border">الصف</th>
+                                    <th class="p-2 border">المعدل</th>
+                                    <th class="p-2 border">المحافظة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-table-body" class="divide-y divide-slate-300">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+
+                        <div class="pt-4 border-t border-slate-300 flex justify-between items-center text-[11px] text-slate-600">
+                            <div>يعتمد بواسطة مدير المدرسة: <strong>أ. سلطان الوائلي</strong></div>
+                            <div>توقيع المشرف: <strong>أ. محمد العزري</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 5: MACROS VIEW -->
+                <div id="wbox-macros" class="hidden space-y-4">
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-bold text-purple-400 flex items-center gap-2">
+                                <i class="fa-solid fa-bolt"></i> مصمم ومتسلسل الماكرو (Macro Action Sequencer)
+                            </h4>
+                            <button onclick="runMacroSequence()" id="btn-run-macro" class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white font-bold rounded-xl text-xs shadow transition flex items-center gap-2">
+                                <i class="fa-solid fa-play"></i>
+                                <span>تشغيل الماكرو آلياً ⚡</span>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-300">يحتوي هذا الماكرو على سلسلة إجراءات متتالية يتم تنفيذها تلقائياً بضغطة زر واحدة:</p>
+                    </div>
+
+                    <!-- Macro Steps List -->
+                    <div class="space-y-3 max-w-2xl mx-auto">
+                        <div id="mstep-1" class="macro-step-card p-4 bg-slate-950 border border-slate-800 rounded-xl flex items-center gap-4 transition">
+                            <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-300 font-bold flex items-center justify-center text-xs">1</div>
+                            <div class="flex-grow">
+                                <h5 class="text-xs font-bold text-white font-mono">الإجراء: OpenForm (فتح نموذج الإدخال)</h5>
+                                <p class="text-[11px] text-slate-400">تجهيز واجهة الإدخال للمستخدم لتحديث السجلات.</p>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-slate-600 mstep-icon"></i>
+                        </div>
+
+                        <div id="mstep-2" class="macro-step-card p-4 bg-slate-950 border border-slate-800 rounded-xl flex items-center gap-4 transition">
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 font-bold flex items-center justify-center text-xs">2</div>
+                            <div class="flex-grow">
+                                <h5 class="text-xs font-bold text-white font-mono">الإجراء: ApplyFilter (تصفية الطلبة الناجحين)</h5>
+                                <p class="text-[11px] text-slate-400">تطبيق استعلام لتصفية البيانات حسب المعدل.</p>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-slate-600 mstep-icon"></i>
+                        </div>
+
+                        <div id="mstep-3" class="macro-step-card p-4 bg-slate-950 border border-slate-800 rounded-xl flex items-center gap-4 transition">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-300 font-bold flex items-center justify-center text-xs">3</div>
+                            <div class="flex-grow">
+                                <h5 class="text-xs font-bold text-white font-mono">الإجراء: OpenReport (توليد التقرير المعتمد)</h5>
+                                <p class="text-[11px] text-slate-400">تحضير كشف الدرجات للطباعة والعرض.</p>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-slate-600 mstep-icon"></i>
+                        </div>
+
+                        <div id="mstep-4" class="macro-step-card p-4 bg-slate-950 border border-slate-800 rounded-xl flex items-center gap-4 transition">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold flex items-center justify-center text-xs">4</div>
+                            <div class="flex-grow">
+                                <h5 class="text-xs font-bold text-white font-mono">الإجراء: MsgBox (إظهار رسالة إتمام العملية)</h5>
+                                <p class="text-[11px] text-slate-400">إشعار المستخدم بنجاح أتمتة الإجراءات.</p>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-slate-600 mstep-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 3: OBJECT MATCHING ARCADE GAME -->
+        <section id="section-matching" class="hidden space-y-6">
+            <div class="glass-panel rounded-2xl p-6 text-center max-w-4xl mx-auto border border-slate-700">
+                <span class="px-3 py-1 bg-access-800/40 text-access-300 text-xs rounded-full font-bold">التحدي الأول</span>
+                <h2 class="text-2xl font-black text-white mt-2 font-tajawal">تحدي مطابقة كائنات أكسس والسرعة</h2>
+                <p class="text-slate-300 text-xs sm:text-sm mt-1">طابق كل كائن من كائنات برنامج أكسس الخمسة بالبطاقة الوظيفية المناسبة له بأسرع وقت!</p>
+                
+                <div class="mt-4 flex items-center justify-center gap-6 text-xs sm:text-sm font-bold">
+                    <div class="bg-slate-800 px-4 py-2 rounded-xl text-slate-300 border border-slate-700">
+                        المطابقات الصحيحة: <span id="match-score-text" class="text-emerald-400 font-bold">0</span> / 5
+                    </div>
+                    <button onclick="initMatchingGame()" class="px-4 py-2 bg-access-800 hover:bg-access-700 text-white rounded-xl transition text-xs flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-right"></i> إعادة اللعبة
+                    </button>
+                </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <h4 class="text-center text-xs font-bold text-access-400 mb-1">كائنات أكسس (Access Objects)</h4>
+                    <div id="match-tags-col" class="space-y-3"></div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-center text-xs font-bold text-amber-400 mb-1">الوظائف والأدوار</h4>
+                    <div id="match-descs-col" class="space-y-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: DATABASE ARCHITECT PUZZLE GAME -->
+        <section id="section-architect" class="hidden space-y-6">
+            <div class="glass-panel rounded-2xl p-6 text-center max-w-4xl mx-auto border border-slate-700">
+                <span class="px-3 py-1 bg-amber-500/20 text-amber-300 text-xs rounded-full font-bold">التحدي الثاني</span>
+                <h2 class="text-2xl font-black text-white mt-2 font-tajawal">تحدي مهندس قواعد البيانات</h2>
+                <p class="text-slate-300 text-xs sm:text-sm mt-1">قم بتحديد نوع البيانات المناسب والمفتاح الأساسي لكل حقل لبناء هيكل جدول سليم!</p>
+            </div>
+
+            <div class="max-w-3xl mx-auto glass-panel rounded-2xl p-6 border border-slate-700 space-y-4">
+                
+                <!-- Challenge Tasks -->
+                <div class="space-y-4 text-xs">
+                    
+                    <!-- Item 1 -->
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <strong class="text-white text-sm block">1. حقل (رقم_الهوية_المدنية)</strong>
+                            <span class="text-slate-400 text-[11px]">رقم فريد لا يتكرر إطلاقاً لكل مواطن.</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <select id="arch-type-1" class="bg-slate-950 p-2 border border-slate-700 rounded-lg text-amber-300 outline-none">
+                                <option value="">اختر نوع البيانات...</option>
+                                <option value="رقم">رقم (Number)</option>
+                                <option value="نص">نص (Text)</option>
+                                <option value="تاريخ">تاريخ/وقت</option>
+                            </select>
+                            <label class="flex items-center gap-1 text-slate-300 cursor-pointer bg-slate-800 p-2 rounded-lg border border-slate-700">
+                                <input type="checkbox" id="arch-pk-1" class="accent-amber-500">
+                                <span>مفتاح أساسي</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <strong class="text-white text-sm block">2. حقل (تاريخ_الميلاد)</strong>
+                            <span class="text-slate-400 text-[11px]">يُخزن يوم وشهر وسنة ولادة الطالب.</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <select id="arch-type-2" class="bg-slate-950 p-2 border border-slate-700 rounded-lg text-amber-300 outline-none">
+                                <option value="">اختر نوع البيانات...</option>
+                                <option value="رقم">رقم (Number)</option>
+                                <option value="نص">نص (Text)</option>
+                                <option value="تاريخ">تاريخ/وقت (Date/Time)</option>
+                            </select>
+                            <label class="flex items-center gap-1 text-slate-300 cursor-pointer bg-slate-800 p-2 rounded-lg border border-slate-700">
+                                <input type="checkbox" id="arch-pk-2" class="accent-amber-500">
+                                <span>مفتاح أساسي</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <strong class="text-white text-sm block">3. حقل (تم_سداد_الرسوم)</strong>
+                            <span class="text-slate-400 text-[11px]">حقل يحتمل إحدى قيمتين فقط (نعم أو لا).</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <select id="arch-type-3" class="bg-slate-950 p-2 border border-slate-700 rounded-lg text-amber-300 outline-none">
+                                <option value="">اختر نوع البيانات...</option>
+                                <option value="نعم/لا">نعم/لا (Yes/No)</option>
+                                <option value="عملة">عملة (Currency)</option>
+                                <option value="نص">نص (Text)</option>
+                            </select>
+                            <label class="flex items-center gap-1 text-slate-300 cursor-pointer bg-slate-800 p-2 rounded-lg border border-slate-700">
+                                <input type="checkbox" id="arch-pk-3" class="accent-amber-500">
+                                <span>مفتاح أساسي</span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="pt-4 flex justify-end">
+                    <button onclick="verifyArchitectChallenge()" class="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-bold rounded-xl text-xs shadow-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>التحقق واكتساب النقاط (+40 XP)</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: GAMIFIED QUIZ - معركة الأبطال -->
+        <section id="section-quiz" class="hidden space-y-6">
+            <div class="glass-panel rounded-2xl p-6 text-center max-w-3xl mx-auto border border-slate-700">
+                <span class="px-3 py-1 bg-red-500/20 text-red-300 text-xs rounded-full font-bold">التحدي الثالث</span>
+                <h2 class="text-2xl font-black text-white mt-2 font-tajawal">مسابقة أبطال قواعد البيانات</h2>
+                <p class="text-slate-300 text-xs sm:text-sm mt-1">اجب عن الأسئلة المنهجية واستخدم وسائل المساعدة لإثبات تفوقك وحصولك على لقب خبير أكسس!</p>
+            </div>
+
+            <div class="max-w-3xl mx-auto glass-panel rounded-2xl p-6 border border-slate-700 relative">
+                
+                <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400 mb-6 pb-4 border-b border-slate-800">
+                    <div>السؤال <strong id="quiz-step-text" class="text-access-400 font-bold">1</strong> من <strong id="quiz-total-text">8</strong></div>
+                    
+                    <div class="flex items-center gap-2">
+                        <button onclick="useLifeline('fifty')" id="life-50" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-amber-400 font-bold transition flex items-center gap-1" title="حذف إجابتين">
+                            <i class="fa-solid fa-scissors"></i> <span>50:50</span>
+                        </button>
+                        <button onclick="useLifeline('hint')" id="life-hint" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-access-400 font-bold transition flex items-center gap-1" title="تلميح المعلم">
+                            <i class="fa-solid fa-lightbulb"></i> <span>تلميح المعلم</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="quiz-card-container"></div>
+
+                <div id="quiz-hint-box" class="hidden mt-4 p-3 bg-access-800/20 border border-access-600/40 rounded-xl text-xs text-access-300 flex items-center gap-2">
+                    <i class="fa-solid fa-chalkboard-user text-amber-400 text-base"></i>
+                    <div><strong class="text-amber-400">تلميح المعلم أ. محمد الهنائي:</strong> <span id="hint-text-content">...</span></div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-800 flex justify-between items-center">
+                    <button id="quiz-prev-btn" onclick="prevQuizQuestion()" disabled class="px-4 py-2 bg-slate-800 text-slate-500 rounded-xl text-xs font-bold transition disabled:opacity-40">
+                        السؤال السابق
+                    </button>
+                    <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="px-6 py-2.5 bg-access-800 hover:bg-access-700 text-white rounded-xl text-xs font-bold transition shadow-md">
+                        التالي <i class="fa-solid fa-arrow-left mr-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: OFFICIAL CERTIFICATE & REPORT -->
+        <section id="section-certificate" class="hidden space-y-6">
+            <div class="glass-panel rounded-2xl p-6 text-center max-w-4xl mx-auto no-print border border-slate-700">
+                <i class="fa-solid fa-award text-amber-400 text-4xl mb-2"></i>
+                <h2 class="text-2xl font-black text-white font-tajawal">شهادة إتقان قواعد البيانات المعتمـدة</h2>
+                <p class="text-slate-300 text-xs sm:text-sm mt-1">تمنح هذه الشهادة رسمياً لطلبة الصف التاسع بمدرسة أبو الدرداء بعد اجتياز وحدة قواعد البيانات بنجاح.</p>
+                
+                <div class="mt-4 flex items-center justify-center gap-3">
+                    <button onclick="window.print()" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i>
+                        <span>طباعة الشهادة / حفظ PDF</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="printable-certificate" class="max-w-4xl mx-auto bg-slate-950 p-4 sm:p-10 rounded-3xl border-8 border-amber-500/50 relative overflow-hidden shadow-2xl text-slate-100">
+                
+                <div class="absolute top-3 right-3 text-amber-500/30 text-3xl pointer-events-none"><i class="fa-solid fa-database"></i></div>
+                <div class="absolute top-3 left-3 text-amber-500/30 text-3xl pointer-events-none"><i class="fa-solid fa-database"></i></div>
+
+                <div class="border-2 border-amber-400/60 rounded-2xl p-6 sm:p-10 relative z-10 text-center space-y-6 bg-slate-950/90">
+                    
+                    <div class="flex items-center justify-between border-b border-amber-500/30 pb-4 text-xs text-slate-300">
+                        <div class="text-right space-y-0.5">
+                            <p class="font-bold text-amber-400">سلطنة عمان</p>
+                            <p>وزارة التربية والتعليم</p>
+                            <p class="font-bold text-white">مدرسة أبو الدرداء للتعليم الأساسي</p>
+                        </div>
+                        <div class="w-16 h-16 rounded-full bg-access-800/40 border-2 border-amber-400 flex items-center justify-center text-amber-400 text-2xl shadow-inner">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+                        <div class="text-left space-y-0.5">
+                            <p class="font-bold text-amber-400">تقنية المعلومات</p>
+                            <p>وحدة قواعد البيانات (Access)</p>
+                            <p id="cert-date" class="text-slate-400">التاريخ: 2026/10/28</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h1 class="text-2xl sm:text-4xl font-black text-amber-400 font-tajawal tracking-wide">شهـادة إتقـان وتفـوق</h1>
+                        <p class="text-xs text-slate-400 mt-1">تشهد مدرسة أبو الدرداء بأن الطالب/ـة المذكور قد أتم تطبيقات وحدة قواعد البيانات أكسس بنجاح</p>
+                    </div>
+
+                    <div class="py-5 my-2 border-y-2 border-amber-500/30 bg-amber-500/5 rounded-2xl">
+                        <p class="text-xs text-slate-400 mb-1">تمنح هذه الشهادة بكل فخر وإعتزاز إلى الطالب/ـة:</p>
+                        <h2 id="cert-student-name" class="text-2xl sm:text-3xl font-black text-white font-tajawal text-amber-300">اسم الطالب الكامل</h2>
+                        <p class="text-xs text-slate-300 mt-2">الصف / الشعبة: <strong id="cert-student-class" class="text-amber-400">الصف التاسع (9 / 1)</strong></p>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl mx-auto">
+                        وذلك لاجتيازه المتميز لكافة أركان وحدة <strong class="text-amber-300">قواعد البيانات في برنامج Microsoft Access</strong> ورتبة <strong id="cert-rank-text" class="text-emerald-400">خبير أكسس</strong> بنسبة إتقان قدرها <strong id="cert-pct-score" class="text-emerald-400 text-base">100%</strong> بمجموع نقاط قدره <strong id="cert-xp-score" class="text-amber-400 font-bold">150 XP</strong>.
+                    </p>
+
+                    <div class="grid grid-cols-3 gap-2 pt-6 border-t border-slate-800 text-xs">
+                        <div class="space-y-1">
+                            <p class="text-slate-400 text-[10px]">معلم المادة</p>
+                            <p class="font-bold text-white">أ. محمد الهنائي</p>
+                            <div class="h-8 flex items-center justify-center font-serif text-amber-400/60 italic text-sm">M. AlHinai</div>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-slate-400 text-[10px]">مشرف المادة</p>
+                            <p class="font-bold text-white">أ. محمد العزري</p>
+                            <div class="h-8 flex items-center justify-center font-serif text-amber-400/60 italic text-sm">M. AlAzri</div>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-slate-400 text-[10px]">مدير المدرسة</p>
+                            <p class="font-bold text-white">أ. سلطان الوائلي</p>
+                            <div class="h-8 flex items-center justify-center font-serif text-amber-400/60 italic text-sm">S. AlWaili</div>
+                        </div>
+                    </div>
+
+                    <div class="text-[10px] text-slate-500 pt-2 flex items-center justify-between border-t border-slate-900">
+                        <span>رمز التوثيق الإلكتروني: <strong class="font-mono text-slate-400" id="cert-code">ACC9-8812</strong></span>
+                        <span class="text-emerald-400 font-bold"><i class="fa-solid fa-shield-check ml-1"></i> وثيقة إلكترونية معتمدة</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800/80 py-4 mt-8 text-center text-xs text-slate-500 no-print">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>© 2026 المنصة التعليمية لتقنية المعلومات - مدرسة أبو الدرداء</p>
+            <p>إعداد: <strong class="text-slate-300">أ. محمد الهنائي</strong> | إشراف: <strong class="text-slate-300">أ. محمد العزري</strong></p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT APPLICATION ENGINE -->
+    <script>
+        // --- GLOBAL STATE ---
+        let studentState = {
+            name: '',
+            classSection: '',
+            avatar: '💾',
+            xp: 0,
+            rank: 'مبتدئ',
+            audioMuted: false,
+            lifelines: { fifty: true, hint: true }
+        };
+
+        // --- SHARED ACCESS DATABASE IN-MEMORY STATE ---
+        let dbState = [
+            { id: 101, name: 'أحمد بن علي البوسعيدي', classSection: '9 / 1', grade: 94, gov: 'مسقط', paid: true },
+            { id: 102, name: 'سارة بنت محمد الهنائية', classSection: '9 / 1', grade: 98, gov: 'الداخلية', paid: true },
+            { id: 103, name: 'خالد بن حمد الريامي', classSection: '9 / 2', grade: 76, gov: 'مسقط', paid: false },
+            { id: 104, name: 'مريم بنت سلطان المعمرية', classSection: '9 / 2', grade: 88, gov: 'شمال الباطنة', paid: true },
+            { id: 105, name: 'فهد بن عبد الله الكندي', classSection: '9 / 3', grade: 64, gov: 'الداخلية', paid: true }
+        ];
+
+        // --- WEB AUDIO API SYNTHESIZER ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (studentState.audioMuted) return;
+            try {
+                if (!audioCtx) audioCtx = new AudioContext();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(650, now + 0.04);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.04);
+                    osc.start(now);
+                    osc.stop(now + 0.04);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.08);
+                    osc.frequency.setValueAtTime(783.99, now + 0.16);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'step') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.setValueAtTime(900, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.setValueAtTime(170, now + 0.1);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'fanfare') {
+                    [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(f, now + i * 0.09);
+                        g.gain.setValueAtTime(0.12, now + i * 0.09);
+                        g.gain.linearRampToValueAtTime(0, now + i * 0.09 + 0.25);
+                        o.start(now + i * 0.09);
+                        o.stop(now + i * 0.09 + 0.25);
+                    });
+                }
+            } catch (e) {
+                console.log('Audio Context Error', e);
+            }
+        }
+
+        function toggleAudioMute() {
+            studentState.audioMuted = !studentState.audioMuted;
+            const btn = document.getElementById('sound-btn');
+            if (studentState.audioMuted) {
+                btn.innerHTML = '<i class="fa-solid fa-volume-xmark text-red-400"></i>';
+                showToast('تم كتم الصوت', 'info');
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                playSound('click');
+                showToast('تم تشغيل الصوت', 'success');
+            }
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const msgEl = document.getElementById('toast-msg');
+
+            msgEl.innerText = msg;
+            if (type === 'success') {
+                icon.className = 'fa-solid fa-circle-check text-emerald-400 text-xl';
+            } else if (type === 'error') {
+                icon.className = 'fa-solid fa-circle-xmark text-red-400 text-xl';
+            } else {
+                icon.className = 'fa-solid fa-circle-info text-access-400 text-xl';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // --- ONBOARDING ENGINE ---
+        function selectAvatar(emoji, btn) {
+            playSound('click');
+            studentState.avatar = emoji;
+            document.querySelectorAll('.avatar-option').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        function handleStudentOnboarding(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('input-student-name').value.trim();
+            const classInput = document.getElementById('input-student-class').value;
+
+            if (!nameInput || !classInput) return;
+
+            studentState.name = nameInput;
+            studentState.classSection = classInput;
+
+            document.getElementById('nav-student-name').innerText = studentState.name;
+            document.getElementById('nav-student-class').innerText = studentState.classSection;
+            document.getElementById('nav-student-avatar').innerText = studentState.avatar;
+
+            document.getElementById('cert-student-name').innerText = studentState.name;
+            document.getElementById('cert-student-class').innerText = `الصف التاسع (${studentState.classSection})`;
+            document.getElementById('cert-code').innerText = 'ACC9-' + Math.floor(1000 + Math.random() * 9000);
+            
+            const today = new Date();
+            document.getElementById('cert-date').innerText = 'التاريخ: ' + today.toLocaleDateString('ar-OM');
+
+            document.getElementById('onboarding-modal').classList.add('hidden');
+            playSound('fanfare');
+            addXP(15);
+            showToast(`أهلاً بك يا مهندس قواعد البيانات ${studentState.name}! +15 XP`);
+            
+            renderDatabaseViews();
+        }
+
+        function addXP(amount) {
+            studentState.xp += amount;
+            document.getElementById('nav-xp-score').innerText = studentState.xp;
+            document.getElementById('cert-xp-score').innerText = studentState.xp + ' XP';
+
+            // Calculate Rank
+            if (studentState.xp >= 120) studentState.rank = 'خبير أكسس';
+            else if (studentState.xp >= 70) studentState.rank = 'مهندس قواعد بيانات';
+            else if (studentState.xp >= 30) studentState.rank = 'محلل بيانات';
+            else studentState.rank = 'مبتدئ';
+
+            document.getElementById('nav-user-rank').innerText = studentState.rank;
+            document.getElementById('cert-rank-text').innerText = studentState.rank;
+
+            const pct = Math.min(100, Math.round((studentState.xp / 150) * 100));
+            document.getElementById('global-progress').style.width = pct + '%';
+            document.getElementById('cert-pct-score').innerText = pct + '%';
+        }
+
+        // --- NAVIGATION TABS ENGINE ---
+        function switchTab(tabId) {
+            playSound('click');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            ['lesson', 'workbench', 'matching', 'architect', 'quiz', 'certificate'].forEach(id => {
+                document.getElementById(`section-${id}`).classList.add('hidden');
+            });
+
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+
+            if (tabId === 'workbench') renderDatabaseViews();
+            if (tabId === 'matching') initMatchingGame();
+            if (tabId === 'quiz') initQuizGame();
+            if (tabId === 'certificate') triggerConfetti();
+        }
+
+        function openWorkbenchTab(subTabKey) {
+            switchTab('workbench');
+            switchAccessSubTab(subTabKey);
+        }
+
+        function switchAccessSubTab(subKey) {
+            playSound('click');
+            document.querySelectorAll('.access-subtab').forEach(b => b.classList.remove('active'));
+            document.getElementById(`asubtab-${subKey}`).classList.add('active');
+
+            ['tables', 'queries', 'forms', 'reports', 'macros'].forEach(k => {
+                document.getElementById(`wbox-${k}`).classList.add('hidden');
+            });
+
+            document.getElementById(`wbox-${subKey}`).classList.remove('hidden');
+
+            if (subKey === 'queries') runLiveQuery();
+            if (subKey === 'reports') renderReportView();
+        }
+
+        // --- RENDER DATABASE VIEWS ---
+        function renderDatabaseViews() {
+            document.getElementById('wb-total-records-count').innerText = dbState.length;
+
+            // Render Table Rows
+            const tableBody = document.getElementById('db-table-body');
+            tableBody.innerHTML = '';
+
+            dbState.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-900/80 transition';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-amber-400"><i class="fa-solid fa-key text-[10px] ml-1"></i> ${row.id}</td>
+                    <td class="p-3 text-white font-sans">${row.name}</td>
+                    <td class="p-3">${row.classSection}</td>
+                    <td class="p-3 font-bold ${row.grade >= 90 ? 'text-emerald-400' : 'text-slate-200'}">${row.grade}%</td>
+                    <td class="p-3 font-sans">${row.gov}</td>
+                    <td class="p-3">${row.paid ? '<span class="text-emerald-400">نعم</span>' : '<span class="text-red-400">لا</span>'}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="deleteRecord(${row.id})" class="text-red-400 hover:text-red-300 transition" title="حذف السجل"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            renderReportView();
+        }
+
+        function deleteRecord(id) {
+            playSound('click');
+            dbState = dbState.filter(r => r.id !== id);
+            renderDatabaseViews();
+            showToast(`تم حذف السجل رقم ${id} من القاعدة.`);
+        }
+
+        function handleAccessFormSubmit(e) {
+            e.preventDefault();
+            playSound('correct');
+
+            const name = document.getElementById('form-inp-name').value.trim();
+            const classSec = document.getElementById('form-inp-class').value;
+            const grade = parseInt(document.getElementById('form-inp-grade').value);
+            const gov = document.getElementById('form-inp-gov').value;
+            const paid = document.getElementById('form-inp-paid').checked;
+
+            const newId = 101 + dbState.length;
+            dbState.push({ id: newId, name, classSection: classSec, grade, gov, paid });
+
+            document.getElementById('form-inp-name').value = '';
+            addXP(10);
+            renderDatabaseViews();
+            switchAccessSubTab('tables');
+            showToast(`تم إضافة الطالب السجل رقم (${newId}) في الجداول والتقارير بنجاح +10 XP`);
+        }
+
+        function runLiveQuery() {
+            playSound('click');
+            const field = document.getElementById('query-field-select').value;
+            const op = document.getElementById('query-op-select').value;
+            const val = document.getElementById('query-val-input').value.trim();
+
+            let filtered = dbState.filter(row => {
+                if (field === 'المعدل') {
+                    const numVal = parseFloat(val) || 0;
+                    if (op === '>=') return row.grade >= numVal;
+                    if (op === '<=') return row.grade <= numVal;
+                    if (op === '=') return row.grade === numVal;
+                } else if (field === 'المحافظة') {
+                    return row.gov.includes(val);
+                } else if (field === 'رسوم_مستوفاة') {
+                    return row.paid === (val === 'نعم' || val === 'true');
+                }
+                return true;
+            });
+
+            document.getElementById('query-results-count').innerText = `${filtered.length} سجلات متطابقة`;
+
+            const tbody = document.getElementById('query-results-body');
+            tbody.innerHTML = '';
+            filtered.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-amber-950/20 transition';
+                tr.innerHTML = `
+                    <td class="p-3 text-amber-400 font-bold">${row.id}</td>
+                    <td class="p-3 text-white font-sans">${row.name}</td>
+                    <td class="p-3">${row.classSection}</td>
+                    <td class="p-3 font-bold text-emerald-400">${row.grade}%</td>
+                    <td class="p-3 font-sans">${row.gov}</td>
+                    <td class="p-3">${row.paid ? 'نعم' : 'لا'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderReportView() {
+            document.getElementById('rep-stat-count').innerText = dbState.length;
+            
+            const avg = dbState.length > 0 ? Math.round(dbState.reduce((s, r) => s + r.grade, 0) / dbState.length) : 0;
+            document.getElementById('rep-stat-avg').innerText = `${avg}%`;
+
+            const tbody = document.getElementById('report-table-body');
+            tbody.innerHTML = '';
+            dbState.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'even:bg-slate-50';
+                tr.innerHTML = `
+                    <td class="p-2 border font-mono font-bold">${row.id}</td>
+                    <td class="p-2 border font-bold">${row.name}</td>
+                    <td class="p-2 border">${row.classSection}</td>
+                    <td class="p-2 border font-bold text-blue-900">${row.grade}%</td>
+                    <td class="p-2 border">${row.gov}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- MACRO EXECUTION ENGINE ---
+        async function runMacroSequence() {
+            const btn = document.getElementById('btn-run-macro');
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            for (let step = 1; step <= 4; step++) {
+                playSound('step');
+                document.querySelectorAll('.macro-step-card').forEach(c => c.classList.remove('macro-active-step'));
+                const card = document.getElementById(`mstep-${step}`);
+                card.classList.add('macro-active-step');
+
+                const icon = card.querySelector('.mstep-icon');
+                icon.className = 'fa-solid fa-spinner fa-spin text-amber-400 text-lg mstep-icon';
+
+                await new Promise(r => setTimeout(r, 900));
+
+                icon.className = 'fa-solid fa-circle-check text-emerald-400 text-lg mstep-icon';
+            }
+
+            playSound('fanfare');
+            addXP(25);
+            showToast('تم تنفيذ سلسلة الماكرو بنجاح كأتمتة كاملة +25 XP');
+
+            btn.disabled = false;
+            btn.classList.remove('opacity-50');
+        }
+
+        // --- GAME 1: MATCHING ENGINE ---
+        const matchData = [
+            { id: 1, tag: 'الجداول (Tables)', desc: 'تخزين البيانات في حقول (عمودية) وسجلات (أفقية) مع مفتاح أساسي' },
+            { id: 2, tag: 'الاستعلامات (Queries)', desc: 'استخراج وتصفية سجلات محددة وفق معايير وشروط معينة' },
+            { id: 3, tag: 'النماذج (Forms)', desc: 'واجهة تفاعلية بصرية مريحة لإدخال وتعديل البيانات بسهولة' },
+            { id: 4, tag: 'التقارير (Reports)', desc: 'تنسيق وتلخيص البيانات لمعاينتها وطباعتها بصورة رسمية' },
+            { id: 5, tag: 'الماكرو (Macros)', desc: 'أتمتة الإجراءات وتنفيذ سلسلة أوامر مبرمجة بضغطة زر واحدة' }
+        ];
+
+        let selectedMTag = null;
+        let selectedMDesc = null;
+        let matchedScore = 0;
+
+        function initMatchingGame() {
+            matchedScore = 0;
+            selectedMTag = null;
+            selectedMDesc = null;
+            document.getElementById('match-score-text').innerText = '0';
+
+            const tagsCol = document.getElementById('match-tags-col');
+            const descsCol = document.getElementById('match-descs-col');
+            tagsCol.innerHTML = '';
+            descsCol.innerHTML = '';
+
+            const shuffledTags = [...matchData].sort(() => Math.random() - 0.5);
+            const shuffledDescs = [...matchData].sort(() => Math.random() - 0.5);
+
+            shuffledTags.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'mtag-card p-3.5 bg-slate-900 border border-slate-700 hover:border-access-500 rounded-xl text-center font-bold text-access-400 text-xs sm:text-sm cursor-pointer transition shadow';
+                div.innerText = item.tag;
+                div.onclick = () => selectMatchTag(div, item.id);
+                tagsCol.appendChild(div);
+            });
+
+            shuffledDescs.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'mdesc-card p-3.5 bg-slate-900 border border-slate-700 hover:border-amber-500 rounded-xl text-right text-xs text-slate-300 cursor-pointer transition shadow leading-relaxed';
+                div.innerText = item.desc;
+                div.onclick = () => selectMatchDesc(div, item.id);
+                descsCol.appendChild(div);
+            });
+        }
+
+        function selectMatchTag(el, id) {
+            playSound('click');
+            if (el.classList.contains('matched')) return;
+            document.querySelectorAll('.mtag-card:not(.matched)').forEach(c => c.classList.remove('ring-2', 'ring-access-500', 'bg-access-500/20'));
+            selectedMTag = { el, id };
+            el.classList.add('ring-2', 'ring-access-500', 'bg-access-500/20');
+            checkMatchingPair();
+        }
+
+        function selectMatchDesc(el, id) {
+            playSound('click');
+            if (el.classList.contains('matched')) return;
+            document.querySelectorAll('.mdesc-card:not(.matched)').forEach(c => c.classList.remove('ring-2', 'ring-amber-500', 'bg-amber-500/20'));
+            selectedMDesc = { el, id };
+            el.classList.add('ring-2', 'ring-amber-500', 'bg-amber-500/20');
+            checkMatchingPair();
+        }
+
+        function checkMatchingPair() {
+            if (selectedMTag && selectedMDesc) {
+                if (selectedMTag.id === selectedMDesc.id) {
+                    playSound('correct');
+                    selectedMTag.el.className = 'p-3.5 bg-emerald-950/80 border-2 border-emerald-500 text-emerald-300 rounded-xl text-center font-bold text-xs sm:text-sm matched opacity-75 pointer-events-none';
+                    selectedMDesc.el.className = 'p-3.5 bg-emerald-950/80 border-2 border-emerald-500 text-emerald-300 rounded-xl text-right text-xs matched opacity-75 pointer-events-none';
+
+                    matchedScore++;
+                    document.getElementById('match-score-text').innerText = matchedScore;
+                    addXP(10);
+
+                    selectedMTag = null;
+                    selectedMDesc = null;
+
+                    if (matchedScore === matchData.length) {
+                        playSound('fanfare');
+                        triggerConfetti();
+                        showToast('مثير للإعجاب! أتممت مطابقة كائنات أكسس بنجاح +50 XP', 'success');
+                    }
+                } else {
+                    playSound('error');
+                    selectedMTag.el.classList.add('border-red-500', 'bg-red-500/20');
+                    selectedMDesc.el.classList.add('border-red-500', 'bg-red-500/20');
+
+                    setTimeout(() => {
+                        if (selectedMTag && selectedMTag.el) selectedMTag.el.classList.remove('border-red-500', 'bg-red-500/20', 'ring-2', 'ring-access-500', 'bg-access-500/20');
+                        if (selectedMDesc && selectedMDesc.el) selectedMDesc.el.classList.remove('border-red-500', 'bg-red-500/20', 'ring-2', 'ring-amber-500', 'bg-amber-500/20');
+                        selectedMTag = null;
+                        selectedMDesc = null;
+                    }, 500);
+                }
+            }
+        }
+
+        // --- GAME 2: ARCHITECT CHALLENGE ---
+        function verifyArchitectChallenge() {
+            const t1 = document.getElementById('arch-type-1').value;
+            const pk1 = document.getElementById('arch-pk-1').checked;
+
+            const t2 = document.getElementById('arch-type-2').value;
+            const pk2 = document.getElementById('arch-pk-2').checked;
+
+            const t3 = document.getElementById('arch-type-3').value;
+            const pk3 = document.getElementById('arch-pk-3').checked;
+
+            if (t1 === 'نص' || t1 === 'رقم') {
+                // Number or Text acceptable for ID
+            }
+
+            if ((t1 === 'نص' || t1 === 'رقم') && pk1 && t2 === 'تاريخ' && !pk2 && t3 === 'نعم/لا' && !pk3) {
+                playSound('fanfare');
+                triggerConfetti();
+                addXP(40);
+                showToast('إجابة نموذجية لمهندس قواعد البيانات! +40 XP');
+            } else {
+                playSound('error');
+                showToast('تأكد من اختيار تاريخ/وقت لحقل الميلاد ونعم/لا لحقل الرسوم والمفتاح الأساسي للرقم المدني!', 'error');
+            }
+        }
+
+        // --- GAME 3: QUIZ ENGINE ---
+        const quizData = [
+            {
+                q: 'ما هو الكائن الأساسي الذي يتم فيه حفظ وتخزين البيانات الفعلية في برنامج أكسس؟',
+                options: ['النماذج', 'الجداول', 'التقارير', 'الماكرو'],
+                correct: 1,
+                hint: 'العمود الفقري لأي قاعدة بيانات تتكون من أعمدة وأسطر.'
+            },
+            {
+                q: 'ما الميزة الأساسية للحقل المعين كـ (مفتاح أساسي Primary Key)؟',
+                options: ['يحتوي على نصوص طويلة فقط', 'يتكرر في كل السجلات', 'قيمة فريدة لا تتكرر ولا يترك فارغاً', 'يمكن حذفه آلياً'],
+                correct: 2,
+                hint: 'مثل رقم الهوية المدنية أو الرقم الأكاديمي للطالب.'
+            },
+            {
+                q: 'أي نوع من البيانات نختاره لحقل (تاريخ تسجيل الطالب)؟',
+                options: ['نص قصير', 'عملة', 'تاريخ/وقت', 'نعم/لا'],
+                correct: 2,
+                hint: 'نوع بيانات يتخصص باليوم والشهر والسنة الوقت.'
+            },
+            {
+                q: 'الكائن المسؤول عن استخراج سجلات مفلترة وفق شرط معین (مثل الطلبة الراسبين) هو:',
+                options: ['الاستعلامات (Queries)', 'النماذج (Forms)', 'الجداول (Tables)', 'الماكرو (Macros)'],
+                correct: 0,
+                hint: 'كلمة تعني السؤال وتصفية البيانات بناءً على معيار البحث.'
+            },
+            {
+                q: 'لتسهيل عملية إدخال البيانات بصفة بصرية مريحة لمدخل البيانات نستخدم:',
+                options: ['التقارير', 'الاستعلامات', 'النماذج', 'الماكرو'],
+                correct: 2,
+                hint: 'واجهة تشبه الاستمارة الورقية لإدخال السجلات.'
+            },
+            {
+                q: 'ما هو الهدف الرئيسي من استخدام التقارير (Reports)؟',
+                options: ['تعديل أسماء الحقول', 'عرض وتلخيص البيانات لمعاينتها وطباعتها ورعايتها', 'أتمتة فتح النوافذ', 'حذف السجلات المعطوبة'],
+                correct: 1,
+                hint: 'تستخدم لإخراج وثيقة ورقية رسمية مجهزة للمدير.'
+            },
+            {
+                q: 'كائن الماكرو (Macro) في برنامج مايكروسوفت أكسس يُستخدم لـ:',
+                options: ['إنشاء مفتاح أساسي تلقائي', 'أتمتة وتنفيذ سلسلة أوامر بضغطة زر', 'تلوين خلفية الجدول', 'حفظ الملف بصيغة PDF'],
+                correct: 1,
+                hint: 'ميزة الأتمتة التلقائية بدون كتابة كود برمجي معقد.'
+            },
+            {
+                q: 'نوع البيانات المناسب لحقل (حالة سداد الرسوم الدراسية) هو:',
+                options: ['رقم', 'نعم/لا', 'تاريخ', 'مذكرة'],
+                correct: 1,
+                hint: 'حقل يحمل خيارين منطقيين فقط (Yes or No).'
+            }
+        ];
+
+        let quizIndex = 0;
+        let quizAnswers = {};
+
+        function initQuizGame() {
+            quizIndex = 0;
+            quizAnswers = {};
+            document.getElementById('quiz-total-text').innerText = quizData.length;
+            renderQuizCard();
+        }
+
+        function renderQuizCard() {
+            const q = quizData[quizIndex];
+            document.getElementById('quiz-step-text').innerText = quizIndex + 1;
+            document.getElementById('quiz-hint-box').classList.add('hidden');
+
+            const container = document.getElementById('quiz-card-container');
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <h3 class="text-base sm:text-lg font-bold text-white font-tajawal leading-relaxed">${q.q}</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2" id="quiz-options-grid">
+                        ${q.options.map((opt, idx) => `
+                            <button onclick="selectQuizOpt(${idx})" id="qopt-${idx}" class="qopt-btn p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 rounded-xl text-right text-xs sm:text-sm font-semibold text-slate-200 transition flex items-center gap-3 ${quizAnswers[quizIndex] === idx ? 'ring-2 ring-access-500 bg-access-500/20' : ''}">
+                                <span class="w-6 h-6 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-access-400">${['أ', 'ب', 'ج', 'د'][idx]}</span>
+                                <span>${opt}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('quiz-prev-btn').disabled = quizIndex === 0;
+            const nextBtn = document.getElementById('quiz-next-btn');
+            if (quizIndex === quizData.length - 1) {
+                nextBtn.innerHTML = 'عرض النتيجة النهائية <i class="fa-solid fa-flag-checkered mr-1"></i>';
+            } else {
+                nextBtn.innerHTML = 'السؤال التالي <i class="fa-solid fa-arrow-left mr-1"></i>';
+            }
+        }
+
+        function selectQuizOpt(idx) {
+            playSound('click');
+            quizAnswers[quizIndex] = idx;
+            renderQuizCard();
+        }
+
+        function useLifeline(type) {
+            playSound('click');
+            const q = quizData[quizIndex];
+            if (type === 'fifty') {
+                const wrongIndices = q.options.map((_, i) => i).filter(i => i !== q.correct);
+                wrongIndices.sort(() => Math.random() - 0.5);
+                
+                document.getElementById(`qopt-${wrongIndices[0]}`).style.visibility = 'hidden';
+                document.getElementById(`qopt-${wrongIndices[1]}`).style.visibility = 'hidden';
+                
+                document.getElementById('life-50').disabled = true;
+                document.getElementById('life-50').classList.add('opacity-40');
+                showToast('تم حذف إجابتين خاطئتين');
+            } else if (type === 'hint') {
+                document.getElementById('hint-text-content').innerText = q.hint;
+                document.getElementById('quiz-hint-box').classList.remove('hidden');
+                
+                document.getElementById('life-hint').disabled = true;
+                document.getElementById('life-hint').classList.add('opacity-40');
+            }
+        }
+
+        function nextQuizQuestion() {
+            playSound('click');
+            if (quizAnswers[quizIndex] === undefined) {
+                showToast('يرجى اختيار إجابة أولاً!', 'info');
+                return;
+            }
+
+            if (quizIndex < quizData.length - 1) {
+                quizIndex++;
+                renderQuizCard();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function prevQuizQuestion() {
+            playSound('click');
+            if (quizIndex > 0) {
+                quizIndex--;
+                renderQuizCard();
+            }
+        }
+
+        function finishQuiz() {
+            let correctNum = 0;
+            quizData.forEach((q, i) => {
+                if (quizAnswers[i] === q.correct) correctNum++;
+            });
+
+            const points = correctNum * 10;
+            addXP(points);
+
+            playSound('fanfare');
+            triggerConfetti();
+
+            const container = document.getElementById('quiz-card-container');
+            container.innerHTML = `
+                <div class="text-center py-6 space-y-4">
+                    <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border-2 border-emerald-500 flex items-center justify-center mx-auto text-2xl font-black">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-white font-tajawal">نتيجة مذهلة يا بطل!</h3>
+                    <p class="text-xs sm:text-sm text-slate-300">أجبت على <strong class="text-emerald-400">${correctNum}</strong> من أصل <strong class="text-white">${quizData.length}</strong> أسئلة بنجاح.</p>
+                    <p class="text-xs text-amber-400">اكتسبت +${points} XP في رصيدك الأكاديمي.</p>
+                    <button onclick="switchTab('certificate')" class="mt-4 px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs shadow-lg transition">
+                        معاينة شهادة تفوق أكسس المعتمدة <i class="fa-solid fa-award mr-1"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        // --- CELEBRATION CONFETTI ENGINE ---
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#881337', '#e11d48', '#f59e0b', '#10b981', '#3b82f6'];
+
+            for (let i = 0; i < 90; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 3 + 2,
+                    speedX: Math.random() * 2 - 1,
+                    rotation: Math.random() * 360
+                });
+            }
+
+            let animationFrame;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    p.rotation += 2;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                if (particles.some(p => p.y < canvas.height)) {
+                    animationFrame = requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    cancelAnimationFrame(animationFrame);
+                }
+            }
+            animate();
+        }
+
+        window.onload = function() {
+            renderDatabaseViews();
+        };
+    </script>
+</body>
+</html>
